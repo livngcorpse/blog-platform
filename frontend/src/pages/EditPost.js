@@ -83,7 +83,7 @@ const EditPost = ({ currentUser }) => {
   if (error) {
     return (
       <div style={styles.container}>
-        <div style={styles.error}>
+        <div style={styles.errorContainer}>
           <h2>Error</h2>
           <p>{error}</p>
           <Link to="/" style={styles.homeLink}>Go back to Home</Link>
@@ -94,33 +94,81 @@ const EditPost = ({ currentUser }) => {
 
   return (
     <div style={styles.container}>
-      <h2>Edit Post</h2>
-      <form onSubmit={handleSubmit} style={styles.form}>
-        <div style={styles.formGroup}>
-          <label htmlFor="title">Title</label>
-          <input
-            type="text"
-            id="title"
-            value={title}
-            onChange={(e) => setTitle(e.target.value)}
-            style={styles.input}
-            disabled={saving}
-          />
+      <div style={styles.navigation}>
+        <Link to="/" style={styles.backLink}>← Back to Home</Link>
+      </div>
+
+      <div style={styles.formContainer}>
+        <h1>Edit Post</h1>
+        
+        {error && <div style={styles.error}>{error}</div>}
+        
+        <form onSubmit={handleSubmit} style={styles.form}>
+          <div style={styles.formGroup}>
+            <label htmlFor="title" style={styles.label}>
+              Title *
+            </label>
+            <input
+              type="text"
+              id="title"
+              value={title}
+              onChange={(e) => setTitle(e.target.value)}
+              style={styles.input}
+              placeholder="Enter your post title..."
+              maxLength="100"
+              disabled={saving}
+            />
+            <small style={styles.charCount}>
+              {title.length}/100 characters
+            </small>
+          </div>
+
+          <div style={styles.formGroup}>
+            <label htmlFor="content" style={styles.label}>
+              Content *
+            </label>
+            <textarea
+              id="content"
+              value={content}
+              onChange={(e) => setContent(e.target.value)}
+              style={styles.textarea}
+              placeholder="Write your post content here..."
+              rows="12"
+              disabled={saving}
+            />
+            <small style={styles.charCount}>
+              {content.length} characters
+            </small>
+          </div>
+
+          <div style={styles.buttonGroup}>
+            <button 
+              type="submit" 
+              disabled={saving || !title.trim() || !content.trim()}
+              style={{
+                ...styles.submitBtn,
+                opacity: (saving || !title.trim() || !content.trim()) ? 0.6 : 1
+              }}
+            >
+              {saving ? 'Updating...' : 'Update Post'}
+            </button>
+            
+            <Link to={`/post/${id}`} style={styles.cancelBtn}>
+              Cancel
+            </Link>
+          </div>
+        </form>
+
+        <div style={styles.tips}>
+          <h3>Editing Tips:</h3>
+          <ul>
+            <li>Make sure your changes improve the content</li>
+            <li>Check for spelling and grammar</li>
+            <li>Keep your message clear and engaging</li>
+            <li>Preview before saving</li>
+          </ul>
         </div>
-        <div style={styles.formGroup}>
-          <label htmlFor="content">Content</label>
-          <textarea
-            id="content"
-            value={content}
-            onChange={(e) => setContent(e.target.value)}
-            style={styles.textarea}
-            disabled={saving}
-          />
-        </div>
-        <button type="submit" style={styles.button} disabled={saving}>
-          {saving ? 'Saving...' : 'Update Post'}
-        </button>
-      </form>
+      </div>
     </div>
   );
 };
@@ -129,18 +177,26 @@ const styles = {
   container: {
     maxWidth: '800px',
     margin: '0 auto',
-    padding: '0 1rem',
+    padding: '0 1rem'
+  },
+  navigation: {
+    marginBottom: '2rem'
+  },
+  backLink: {
+    color: '#007bff',
+    textDecoration: 'none',
+    fontSize: '0.9rem'
   },
   loading: {
     textAlign: 'center',
     marginTop: '50px',
-    fontSize: '18px',
+    fontSize: '18px'
   },
   unauthorized: {
     textAlign: 'center',
     padding: '3rem',
     backgroundColor: '#f8f9fa',
-    borderRadius: '8px',
+    borderRadius: '8px'
   },
   loginLink: {
     display: 'inline-block',
@@ -149,7 +205,25 @@ const styles = {
     textDecoration: 'none',
     padding: '0.75rem 1.5rem',
     borderRadius: '4px',
-    marginTop: '1rem',
+    marginTop: '1rem'
+  },
+  errorContainer: {
+    textAlign: 'center',
+    padding: '3rem',
+    backgroundColor: '#f8f9fa',
+    borderRadius: '8px'
+  },
+  homeLink: {
+    display: 'inline-block',
+    color: '#007bff',
+    textDecoration: 'none',
+    marginTop: '1rem'
+  },
+  formContainer: {
+    backgroundColor: 'white',
+    padding: '2rem',
+    borderRadius: '8px',
+    boxShadow: '0 2px 8px rgba(0,0,0,0.1)'
   },
   error: {
     backgroundColor: '#f8d7da',
@@ -157,27 +231,19 @@ const styles = {
     padding: '0.75rem',
     borderRadius: '4px',
     marginBottom: '1rem',
-    border: '1px solid #f5c6cb',
-    textAlign: 'center',
-  },
-  homeLink: {
-    color: '#007bff',
-    textDecoration: 'none',
+    border: '1px solid #f5c6cb'
   },
   form: {
-    backgroundColor: 'white',
-    padding: '2rem',
-    borderRadius: '8px',
-    boxShadow: '0 2px 8px rgba(0,0,0,0.1)',
+    marginBottom: '2rem'
   },
   formGroup: {
-    marginBottom: '1.5rem',
+    marginBottom: '1.5rem'
   },
   label: {
     display: 'block',
     marginBottom: '0.5rem',
     fontWeight: 'bold',
-    color: '#333',
+    color: '#333'
   },
   input: {
     width: '100%',
@@ -185,7 +251,7 @@ const styles = {
     fontSize: '1rem',
     border: '1px solid #ddd',
     borderRadius: '4px',
-    boxSizing: 'border-box',
+    boxSizing: 'border-box'
   },
   textarea: {
     width: '100%',
@@ -196,19 +262,18 @@ const styles = {
     resize: 'vertical',
     fontFamily: 'inherit',
     lineHeight: '1.5',
-    boxSizing: 'border-box',
+    boxSizing: 'border-box'
   },
   charCount: {
     display: 'block',
     marginTop: '0.25rem',
     color: '#666',
-    fontSize: '0.875rem',
+    fontSize: '0.875rem'
   },
   buttonGroup: {
     display: 'flex',
     gap: '1rem',
-    alignItems: 'center',
-    marginTop: '1rem',
+    alignItems: 'center'
   },
   submitBtn: {
     backgroundColor: '#007bff',
@@ -218,19 +283,21 @@ const styles = {
     fontSize: '1rem',
     borderRadius: '4px',
     cursor: 'pointer',
-    transition: 'background-color 0.3s',
+    transition: 'background-color 0.3s'
   },
   cancelBtn: {
     color: '#6c757d',
     textDecoration: 'none',
     padding: '0.75rem 1rem',
     border: '1px solid #6c757d',
-    borderRadius: '4px',
+    borderRadius: '4px'
   },
   tips: {
     backgroundColor: '#f8f9fa',
     padding: '1.5rem',
     borderRadius: '4px',
-    marginTop: '2rem',
-  },
+    marginTop: '2rem'
+  }
 };
+
+export default EditPost;
